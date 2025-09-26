@@ -1,0 +1,49 @@
+services:
+  # Base de datos MySQL
+  mysql:
+    image: mysql:8.0
+    container_name: farmacia_mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: password123
+      MYSQL_DATABASE: farmacia_db
+      MYSQL_USER: farmacia_user
+      MYSQL_PASSWORD: farmacia_pass
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    command: --default-authentication-plugin=mysql_native_password
+    restart: unless-stopped
+    networks:
+      - farmacia_network
+
+  # API de Farmacia
+  api:
+    build: .  # Construir desde el Dockerfile local
+    container_name: farmacia_api
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: mysql+pymysql://farmacia_user:farmacia_pass@mysql:3306/farmacia_db
+    depends_on:
+      - mysql
+    restart: unless-stopped
+    networks:
+      - farmacia_network
+    # Esperar a que MySQL esté listo
+    command: >
+      sh -c "
+        while ! nc -z mysql 3306; do
+          echo 'Esperando MySQL...'
+          sleep 2
+        done
+        echo 'MySQL está listo!'
+        uvicorn main:app --host 0.0.0.0 --port 8000
+      "
+
+volumes:
+  mysql_data:
+
+networks:
+  farmacia_network:
+    driver: bridge

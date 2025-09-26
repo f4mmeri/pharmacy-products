@@ -1,0 +1,39 @@
+# Archivos a ignorar en la imagen Docker
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+.venv/
+venv/
+env/
+ENV/
+
+# Base de datos local
+*.db
+farmacia.db
+
+# Logs
+*.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Git
+.git/
+.gitignore
+
+# Docker
+Dockerfile
+.dockerignore
+docker-compose*.yml
+
+# Testing
+test_*.py
+*_test.py
+
+# Documentation
+README.md
