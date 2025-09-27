@@ -4,7 +4,8 @@ from sqlalchemy.orm import Session
 from app.core.database import SessionLocal
 from app.productos.domain import ProductoDB
 
-CSV_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), "productos.csv")
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+CSV_PATH = os.path.join(BASE_DIR, "productos.csv")
 
 def is_db_seeded(db: Session) -> bool:
     return db.query(ProductoDB).first() is not None
