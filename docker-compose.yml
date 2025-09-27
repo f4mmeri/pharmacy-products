@@ -19,12 +19,12 @@ services:
 
   # API de Farmacia
   api:
-    build: .  # Construir desde el Dockerfile local
+    image: f4mmeri/pharmacy-api:latest
     container_name: farmacia_api
     ports:
       - "8000:8000"
-    environment:
-      DATABASE_URL: mysql+pymysql://farmacia_user:farmacia_pass@mysql:3306/farmacia_db
+    env_file:
+      - .env
     depends_on:
       - mysql
     restart: unless-stopped
