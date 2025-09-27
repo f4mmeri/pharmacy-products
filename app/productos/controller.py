@@ -18,7 +18,7 @@ from app.productos.service import (
 )
 
 router = APIRouter(
-    prefix="/api/productos",
+    prefix="/productos",
     tags=["Productos"]
 )
 
