@@ -19,7 +19,6 @@ engine_config = {
 
 # Crear el motor con configuración específica para MySQL
 engine = create_engine(settings.DATABASE_URL, **engine_config)
-
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
@@ -34,7 +33,7 @@ def get_db():
 
 def wait_for_db():
     """Espera a que la base de datos esté disponible"""
-    max_retries = 30
+    max_retries = 60  # Aumentado para Docker
     retry_count = 0
 
     while retry_count < max_retries:
@@ -49,7 +48,7 @@ def wait_for_db():
             retry_count += 1
             logger.warning(f"Intento {retry_count}/{max_retries} - Error conectando a la base de datos: {e}")
             if retry_count < max_retries:
-                time.sleep(2)
+                time.sleep(3)  # Aumentado el tiempo de espera para Docker
 
     logger.error("No se pudo establecer conexión con la base de datos después de varios intentos")
     return False
