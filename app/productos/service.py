@@ -1,9 +1,9 @@
 from sqlalchemy.orm import Session
-from productos.repository import (
+from app.productos.repository import (
     get_by_id, get_by_nombre, get_all, create, update, delete,
     get_by_tipo, get_stock_bajo, get_con_receta, get_sin_receta, update_stock
 )
-from productos.dto import ProductoCreate, ProductoUpdate
+from app.productos.dto import ProductoCreate, ProductoUpdate
 
 from fastapi import HTTPException, status, Query
 

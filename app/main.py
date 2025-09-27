@@ -1,8 +1,8 @@
 from fastapi import FastAPI
-from core.database import Base, engine
-from productos.controller import router as productos_router
+from app.core.database import Base, engine
+from app.productos.controller import router as productos_router
+from app.core.seed import seed_db
 
-# Crear todas las tablas
 Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
@@ -14,6 +14,7 @@ app = FastAPI(
 )
 
 app.include_router(productos_router)
+seed_db()
 
 @app.get("/echo", tags=["Test"])
 def echo_get(message: str = "pong"):
