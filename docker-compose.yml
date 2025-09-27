@@ -1,49 +1,26 @@
-services:
-  # Base de datos MySQL
-  mysql:
-    image: mysql:8.0
-    container_name: farmacia_mysql
-    environment:
-      MYSQL_ROOT_PASSWORD: password123
-      MYSQL_DATABASE: farmacia_db
-      MYSQL_USER: farmacia_user
-      MYSQL_PASSWORD: farmacia_pass
-    ports:
-      - "3306:3306"
-    volumes:
-      - mysql_data:/var/lib/mysql
-    command: --default-authentication-plugin=mysql_native_password
-    restart: unless-stopped
-    networks:
-      - farmacia_network
+FROM python:3.11-slim
 
-  # API de Farmacia
-  api:
-    image: f4mmeri/pharmacy-api:latest
-    container_name: farmacia_api
-    ports:
-      - "8000:8000"
-    env_file:
-      - .env
-    depends_on:
-      - mysql
-    restart: unless-stopped
-    networks:
-      - farmacia_network
-    # Esperar a que MySQL esté listo
-    command: >
-      sh -c "
-        while ! nc -z mysql 3306; do
-          echo 'Esperando MySQL...'
-          sleep 2
-        done
-        echo 'MySQL está listo!'
-        uvicorn main:app --host 0.0.0.0 --port 8000
-      "
+# Instalar dependencias del sistema necesarias para MySQL
+RUN apt-get update && apt-get install -y \
+    default-libmysqlclient-dev \
+    build-essential \
+    pkg-config \
+    && rm -rf /var/lib/apt/lists/*
 
-volumes:
-  mysql_data:
+# Establecer directorio de trabajo
+WORKDIR /app
 
-networks:
-  farmacia_network:
-    driver: bridge
+# Copiar requirements primero para aprovechar la caché de Docker
+COPY requirements.txt .
+
+# Instalar dependencias de Python
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Copiar el código de la aplicación
+COPY . .
+
+# Exponer el puerto
+EXPOSE 8000
+
+# Comando para ejecutar la aplicación
+CMD ["python", "-m", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]

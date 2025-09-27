@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from sqlalchemy.orm import Session
 from app.productos.domain import ProductoDB
 
@@ -37,18 +39,17 @@ def create(db: Session, producto: dict):
 def update(db: Session, producto, update_data: dict):
     for field, value in update_data.items():
         setattr(producto, field, value)
-    producto.fecha_actualizacion = producto.fecha_actualizacion.utcnow()
+    producto.fecha_actualizacion = datetime.utcnow()
     db.commit()
     db.refresh(producto)
     return producto
 
 def update_stock(db: Session, producto, nuevo_stock: int):
     producto.stock = nuevo_stock
-    producto.fecha_actualizacion = producto.fecha_actualizacion.utcnow()
+    producto.fecha_actualizacion = datetime.utcnow()
     db.commit()
     db.refresh(producto)
     return producto
-
 def delete(db: Session, producto):
     db.delete(producto)
     db.commit()
