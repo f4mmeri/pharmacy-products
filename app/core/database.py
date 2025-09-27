@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker, declarative_base
 from app.core.config import settings
 import time
@@ -39,9 +39,10 @@ def wait_for_db():
 
     while retry_count < max_retries:
         try:
-            # Intentar conectar a la base de datos
+            # Intentar conectar a la base de datos usando text() para SQLAlchemy 2.0
             with engine.connect() as conn:
-                conn.execute("SELECT 1")
+                result = conn.execute(text("SELECT 1"))
+                result.fetchone()  # Asegurar que la consulta se ejecute completamente
             logger.info("Conexión a la base de datos establecida exitosamente")
             return True
         except Exception as e:
