@@ -1,26 +1,51 @@
-FROM python:3.11-slim
+version: '3.8'
 
-# Instalar dependencias del sistema necesarias para MySQL
-RUN apt-get update && apt-get install -y \
-    default-libmysqlclient-dev \
-    build-essential \
-    pkg-config \
-    && rm -rf /var/lib/apt/lists/*
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: farmacia_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: farmacia
+      MYSQL_USER: farmacia_user
+      MYSQL_PASSWORD: farmacia_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - farmacia_network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
 
-# Establecer directorio de trabajo
-WORKDIR /app
+  backend:
+    build: .
+    container_name: farmacia_backend
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_URL=mysql+pymysql://farmacia_user:farmacia_password@mysql:3306/farmacia
+      - MYSQL_HOST=mysql
+      - MYSQL_PORT=3306
+      - MYSQL_DATABASE=farmacia
+      - MYSQL_USER=farmacia_user
+      - MYSQL_PASSWORD=farmacia_password
+    depends_on:
+      mysql:
+        condition: service_healthy
+    networks:
+      - farmacia_network
+    volumes:
+      - ./productos.csv:/app/productos.csv
 
-# Copiar requirements primero para aprovechar la caché de Docker
-COPY requirements.txt .
+volumes:
+  mysql_data:
 
-# Instalar dependencias de Python
-RUN pip install --no-cache-dir -r requirements.txt
-
-# Copiar el código de la aplicación
-COPY . .
-
-# Exponer el puerto
-EXPOSE 8000
-
-# Comando para ejecutar la aplicación
-CMD ["python", "-m", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+networks:
+  farmacia_network:
+    driver: bridge
