@@ -11,7 +11,8 @@ logger = logging.getLogger(__name__)
 # Esperar a que la base de datos esté disponible
 logger.info("Esperando conexión con la base de datos...")
 if not wait_for_db():
-    raise Exception("No se pudo conectar a la base de datos")
+    logger.critical("No se pudo conectar a la base de datos después de múltiples intentos")
+    exit(1)
 
 # Crear las tablas
 logger.info("Creando tablas en la base de datos...")
