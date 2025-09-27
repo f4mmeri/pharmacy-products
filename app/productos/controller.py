@@ -2,12 +2,12 @@ from typing import List
 
 from fastapi import APIRouter, Depends, status, Query
 from sqlalchemy.orm import Session
-from app.core.database import get_db
-from app.productos.dto import ProductosPaginadosResponse
-from app.productos.dto import (
+from core.database import get_db
+from productos.dto import ProductosPaginadosResponse
+from productos.dto import (
     ProductoCreate, ProductoUpdate, ProductoResponse
 )
-from app.productos.service import (
+from productos.service import (
     crear_producto, obtener_producto,
     actualizar_producto, eliminar_producto,
     obtener_productos_paginados,
