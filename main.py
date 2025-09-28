@@ -43,10 +43,7 @@ app.add_middleware(
 )
 
 # Incluir los routers
-app.include_router(productos_router, prefix="/api")  # Agregué el prefijo /api
-
-# Poblar la base de datos con datos iniciales
-logger.info("Ejecutando seed de la base de datos...")
+app.include_router(productos_router, prefix="/api")
 
 @app.get("/echo", tags=["Test"])
 def echo_get(message: str = "pong"):
@@ -55,15 +52,6 @@ def echo_get(message: str = "pong"):
         "echo": message,
         "timestamp": datetime.utcnow(),
         "method": "GET"
-    }
-
-@app.get("/health", tags=["Health"])
-def health_check():
-    """Endpoint para verificar el estado de la aplicación"""
-    return {
-        "status": "healthy",
-        "database": "connected",
-        "timestamp": __import__('datetime').datetime.utcnow()
     }
 
 if __name__ == "__main__":
