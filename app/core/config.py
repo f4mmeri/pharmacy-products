@@ -3,13 +3,7 @@ from typing import Optional
 
 
 class Settings:
-    # Configuración de base de datos
-    DATABASE_URL: str = os.getenv(
-        "DATABASE_URL",
-        "mysql+pymysql://farmacia_user:farmacia_password@localhost:3306/farmacia"
-    )
-
-    # Configuraciones específicas de MySQL (opcional, para uso directo)
+    # Configuraciones específicas de MySQL
     MYSQL_HOST: str = os.getenv("MYSQL_HOST", "localhost")
     MYSQL_PORT: int = int(os.getenv("MYSQL_PORT", "3306"))
     MYSQL_DATABASE: str = os.getenv("MYSQL_DATABASE", "farmacia")
@@ -20,5 +14,9 @@ class Settings:
     HOST: str = os.getenv("HOST", "0.0.0.0")
     PORT: int = int(os.getenv("PORT", "8000"))
 
+    # Configuración de base de datose
+    @property
+    def DATABASE_URL(self) -> str:
+        return f"mysql+pymysql://{self.MYSQL_USER}:{self.MYSQL_PASSWORD}@{self.MYSQL_HOST}:{self.MYSQL_PORT}/{self.MYSQL_DATABASE}"
 
 settings = Settings()

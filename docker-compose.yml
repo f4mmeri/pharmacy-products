@@ -1,61 +1,22 @@
 version: '3.8'
 
 services:
-  # Servicio de base de datos MySQL
-  mysql:
-    image: mysql:8.0
-    container_name: farmacia_mysql
-    restart: unless-stopped
-    environment:
-      MYSQL_ROOT_PASSWORD: root_password
-      MYSQL_DATABASE: farmacia
-      MYSQL_USER: farmacia_user
-      MYSQL_PASSWORD: farmacia_password
-    ports:
-      - "3307:3306"
-    volumes:
-      - mysql_data:/var/lib/mysql
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
-    networks:
-      - farmacia_network
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "farmacia_user", "-pfarmacia_password"]
-      timeout: 20s
-      retries: 10
-      interval: 10s
-
-  # Servicio de la aplicación FastAPI
-  api:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: farmacia_api
-    restart: unless-stopped
+  # FastAPI Backend Service
+  pharmacy-api:
+    build: .
+    container_name: pharmavida_backend
+    env_file:
+      - .env
     ports:
       - "8000:8000"
-    environment:
-      # Variables de entorno para la conexión a la base de datos
-      DATABASE_URL: mysql+pymysql://farmacia_user:farmacia_password@mysql:3306/farmacia
-      MYSQL_HOST: mysql
-      MYSQL_PORT: 3306
-      MYSQL_DATABASE: farmacia
-      MYSQL_USER: farmacia_user
-      MYSQL_PASSWORD: farmacia_password
-      HOST: 0.0.0.0
-      PORT: 8000
+    restart: unless-stopped
     volumes:
       - .:/app
-      - /app/.venv  # Excluir el virtual environment del host
-    networks:
-      - farmacia_network
-    depends_on:
-      mysql:
-        condition: service_healthy
-    command: ["python", "-m", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
-
-networks:
-  farmacia_network:
-    driver: bridge
-
-volumes:
-  mysql_data:
+    environment:
+      - PYTHONPATH=/app
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/docs"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s

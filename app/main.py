@@ -2,7 +2,6 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.database import Base, engine, wait_for_db
 from app.productos.controller import router as productos_router
-from app.core.seed import seed_db
 import logging
 
 # Configurar logging
@@ -32,6 +31,7 @@ app = FastAPI(
 origins = [
     "http://localhost:5173",    # Vite
     "http://127.0.0.1:5173",    # Vite con 127.0.0.1
+    "https://main.d228pyed0omtdt.amplifyapp.com"
 ]
 
 app.add_middleware(
@@ -47,7 +47,6 @@ app.include_router(productos_router, prefix="/api")  # Agregué el prefijo /api
 
 # Poblar la base de datos con datos iniciales
 logger.info("Ejecutando seed de la base de datos...")
-seed_db()
 
 @app.get("/echo", tags=["Test"])
 def echo_get(message: str = "pong"):
