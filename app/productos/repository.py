@@ -50,6 +50,7 @@ def update_stock(db: Session, producto, nuevo_stock: int):
     db.commit()
     db.refresh(producto)
     return producto
+
 def delete(db: Session, producto):
     db.delete(producto)
     db.commit()

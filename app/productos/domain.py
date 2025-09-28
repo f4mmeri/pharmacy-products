@@ -1,5 +1,4 @@
-from sqlalchemy import Column, Integer, String, Float, DateTime, Boolean
-from datetime import datetime
+from sqlalchemy import Column, Integer, String, Float, DateTime, Boolean, func
 from app.core.database import Base
 
 class ProductoDB(Base):
@@ -10,5 +9,5 @@ class ProductoDB(Base):
     precio = Column(Float, nullable=False)
     stock = Column(Integer, nullable=False, default=0)
     requiere_receta = Column(Boolean, nullable=False, default=False)
-    fecha_creacion = Column(DateTime, default=datetime.utcnow)
-    fecha_actualizacion = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    fecha_creacion = Column(DateTime, server_default=func.now())
+    fecha_actualizacion = Column(DateTime, server_default=func.now(), onupdate=func.now())

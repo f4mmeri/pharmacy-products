@@ -7,7 +7,6 @@ from app.productos.dto import ProductoCreate, ProductoUpdate
 
 from fastapi import HTTPException, status, Query
 
-
 def crear_producto(db: Session, producto: ProductoCreate):
     if get_by_nombre(db, producto.nombre):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Ya existe un producto con este nombre")

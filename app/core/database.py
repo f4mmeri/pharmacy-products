@@ -14,7 +14,7 @@ engine_config = {
     "pool_recycle": 300,
     "pool_size": 10,
     "max_overflow": 20,
-    "echo": False  # Cambiar a True para ver las consultas SQL en logs
+    "echo": False
 }
 
 # Crear el motor con configuración específica para MySQL
@@ -32,23 +32,21 @@ def get_db():
 
 
 def wait_for_db():
-    """Espera a que la base de datos esté disponible"""
-    max_retries = 60  # Aumentado para Docker
+    max_retries = 60
     retry_count = 0
 
     while retry_count < max_retries:
         try:
-            # Intentar conectar a la base de datos usando text() para SQLAlchemy 2.0
             with engine.connect() as conn:
                 result = conn.execute(text("SELECT 1"))
-                result.fetchone()  # Asegurar que la consulta se ejecute completamente
+                result.fetchone()
             logger.info("Conexión a la base de datos establecida exitosamente")
             return True
         except Exception as e:
             retry_count += 1
             logger.warning(f"Intento {retry_count}/{max_retries} - Error conectando a la base de datos: {e}")
             if retry_count < max_retries:
-                time.sleep(3)  # Aumentado el tiempo de espera para Docker
+                time.sleep(3)
 
     logger.error("No se pudo establecer conexión con la base de datos después de varios intentos")
     return False
