@@ -22,7 +22,7 @@ router = APIRouter(
     tags=["Productos"]
 )
 
-@router.get("", response_model=ProductosPaginadosResponse)
+@router.get("/paged", response_model=ProductosPaginadosResponse)
 def listar_paginado(
     page: int = Query(1, ge=1),
     pagesize: int = Query(25, gt=0),
