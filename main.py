@@ -23,8 +23,8 @@ app = FastAPI(
     title="API REST Farmacia - Productos",
     description="Microservicio para gestionar productos de farmacia",
     version="1.0.0",
-    docs_url="/docs",
-    redoc_url="/redoc"
+    docs_url="/api/productos/docs",      # Swagger UI ahora está en /api/docs
+    redoc_url="/api/productos/redoc"     # ReDoc ahora está en /api/redoc
 )
 
 # Configurar CORS
