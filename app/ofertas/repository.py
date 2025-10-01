@@ -1,4 +1,4 @@
-from app.ofertas.domain.oferta_db import OfertaDB, OfertaDetalleDB
+from app.ofertas.domain import OfertaDB, OfertaDetalleDB
 from sqlalchemy.orm import Session
 from datetime import datetime
 
