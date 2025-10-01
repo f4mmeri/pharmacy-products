@@ -5,9 +5,8 @@ from app.ofertas.dto import OfertaCreate, OfertaUpdate
 from fastapi import HTTPException, status
 
 def crear_oferta(db, oferta: OfertaCreate):
-    # Validaciones básicas
-    if len(oferta.producto_ids) != len(oferta.descuentos):
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Las listas producto_ids y descuentos deben tener el mismo tamaño")
+    if len(oferta.detalles) == 0:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Debes agregar al menos un producto en la oferta")
     data = oferta.dict()
     return create(db, data)
 
