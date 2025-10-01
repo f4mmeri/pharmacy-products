@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.database import Base, engine, wait_for_db
 from app.productos.controller import router as productos_router
+from app.ofertas.controller import router as ofertas_router
 import logging
 
 # Configurar logging
@@ -44,6 +45,7 @@ app.add_middleware(
 
 # Incluir los routers
 app.include_router(productos_router, prefix="/api")
+app.include_router(ofertas_router, prefix="/api")
 
 @app.get("/echo", tags=["Test"])
 def echo_get(message: str = "pong"):
